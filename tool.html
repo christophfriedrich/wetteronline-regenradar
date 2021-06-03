@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wetteronline Regenradar Reverse Engineering</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <style>
+    p input {
+      width: 90vw;
+    }
+    code {
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    format: <input v-model="format"/>
+    k: <input v-model="k"/>
+    time: <input v-model="time"/><br/><br/>
+    tiles:<br/>
+    <p v-for="i in [0,1,2,3,4,5,6,7]">
+      <input v-model="tiles[i]"/><br/>
+    </p>
+    URL:<br/><code>{{url}}</code><br/><br/>
+    Resulting image:<br/><img :src="url"/>
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        format: 'webp',
+        tiles: [
+          'topo',
+          '1;;0;0',
+          'wetterradar/prozess/tiles/geolayer/rasterimages/rr_topography/v1/ZL8/512/132_84.jpg$r',
+          '2;;0;0;false',
+          'wetterradar/prozess/tiles/rainlayerProg/2021/06/03/18/35/v24/ZL7/522/sprite/66_42.png;wetterradarglobal/prozess/tiles/rainlayerProg/2021/06/03/18/30/v14/ZL7/522/border/66_42.png$i',
+          '1;;0;0',
+          'geo/prozess/karten/produktkarten/wetterradar/generate/rasterTiles/rr_geooverlay_cities_excluded/v2/ZL8/512/132_84.png',
+          ''  // one more to leave room to play
+        ],
+        k: '-1426785660',
+        time: '20210603-1415-2'
+      },
+      computed: {
+        url() {
+          return 'https://tiles.wo-cloud.com/composite?' +
+          'format=' + this.format +
+          '&k=' + this.k +
+          '&lg=rr' +
+          '&tiles=' + btoa( this.tiles.filter(e => e != '').join('|') ) +
+          '&time=' + this.time;
+        }
+      }
+    })
+  </script>
+</body>
+</html>
